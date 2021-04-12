@@ -1,6 +1,6 @@
 USE AdventureWorks2019
 GO
-SELECT result.Name, SUM(result.Total) 
+SELECT result.Name, result.Total
 FROM (SELECT p.Name, 
 		SUM(d.LineTotal) AS Total, 
 		NTILE(10) OVER (ORDER BY SUM(d.LineTotal)) AS Blocks 
@@ -65,7 +65,7 @@ GO
 
 -----------------------------------
 
-SELECT CONCAT_WS('-', YEAR(h.OrderDate), MONTH(h.OrderDate), DAY(h.OrderDate)) AS DateOrder,
+SELECT CONVERT(NVARCHAR, h.OrderDate, 23)  AS DateOrder,
 	FIRST_VALUE(MAX(d.LineTotal)) OVER (PARTITION BY h.OrderDate ORDER BY h.OrderDate ) AS MaxSale
 FROM Sales.SalesOrderHeader AS h
 JOIN Sales.SalesOrderDetail AS d
@@ -77,7 +77,7 @@ GO
 ---------------------------------
 
 SELECT s.Name, 
-	   FIRST_VALUE(p.Name) OVER (ORDER BY COUNT(p.Name) DESC) AS NameFirst
+	   FIRST_VALUE(p.Name) OVER (PARTITION BY s.Name ORDER BY COUNT(p.Name) DESC) AS NameFirst
 FROM Sales.SalesOrderHeader	AS h
 JOIN Sales.SalesOrderDetail	AS d
 	ON h.SalesOrderID = d.SalesOrderID
