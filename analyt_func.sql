@@ -41,13 +41,13 @@ GO
 
 ----------------------------
 
-SELECT result.ProductCategoryID,
+SELECT result.ProductCategoryID, 
 	   result.Total,
 	  (result.Total - result.Due)/result.Total AS ResultSale
 FROM (SELECT c.ProductCategoryID,
 		SUM(d.LineTotal) AS Total,
-		Year(h.DueDate) as DateYear,
-		LAG(SUM(h.TotalDue)) OVER (ORDER BY	c.ProductCategoryID) AS Due
+		Year(h.OrderDate) as DateYear,
+		LAG(SUM(d.LineTotal)) OVER (ORDER BY c.ProductCategoryID, Year(h.OrderDate)) AS Due
 	FROM	Sales.SalesOrderHeader AS h
 	JOIN	Sales.SalesOrderDetail AS d
 		ON	h.SalesOrderID = d.SalesOrderID
@@ -57,8 +57,8 @@ FROM (SELECT c.ProductCategoryID,
 		ON	p.ProductSubcategoryID = sc.ProductSubcategoryID
 	JOIN	Production.ProductCategory AS c
 		ON	sc.ProductCategoryID = c.ProductCategoryID
-	WHERE	YEAR(h.DueDate) between 2013 and 2014 
-	GROUP BY	c.ProductCategoryID, Year(h.DueDate)
+	WHERE	YEAR(h.OrderDate) between 2012 and 2013 
+	GROUP BY	c.ProductCategoryID, Year(h.OrderDate)
 ) AS result
 WHERE result.DateYear = 2013;
 GO
