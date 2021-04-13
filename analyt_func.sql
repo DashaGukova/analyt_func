@@ -76,7 +76,7 @@ GO
 
 ---------------------------------
 
-SELECT s.Name, 
+SELECT DISTINCT s.Name, 
 	   FIRST_VALUE(p.Name) OVER (PARTITION BY s.Name ORDER BY COUNT(p.Name) DESC) AS NameFirst
 FROM Sales.SalesOrderHeader	AS h
 JOIN Sales.SalesOrderDetail	AS d
